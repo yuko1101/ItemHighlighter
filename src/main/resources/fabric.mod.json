@@ -3,7 +3,7 @@
   "id": "itemhighlighter",
   "version": "${version}",
   "name": "ItemHighlighter",
-  "description": "A fabric mod which highlight items in the inventory for Hoplite.",
+  "description": "A fabric mod which highlights items in the inventory for Hoplite.",
   "authors": [
     "yuko1101"
   ],
