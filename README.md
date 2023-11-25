@@ -1,2 +1,2 @@
 # ItemHighlighter
-A fabric mod which highlight items in the inventory for Hoplite.
+A fabric mod which highlights items in the inventory for Hoplite.
