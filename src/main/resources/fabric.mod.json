@@ -16,7 +16,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "io.github.yuko1101.itemhighlighter.ItemHighlighter"
+      {
+        "adapter": "kotlin",
+        "value": "io.github.yuko1101.itemhighlighter.ItemHighlighter"
+      }
     ]
   },
   "mixins": [
@@ -25,6 +28,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "${minecraft_version}",
+    "fabric-language-kotlin": ">=1.10.15+kotlin.1.9.21"
   }
 }
