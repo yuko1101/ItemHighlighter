@@ -2,25 +2,29 @@
   "schemaVersion": 1,
   "id": "itemhighlighter",
   "version": "${version}",
-
   "name": "ItemHighlighter",
-  "description": "",
-  "authors": [],
-  "contact": {},
-
+  "description": "A fabric mod which highlight items in the inventory for Hoplite.",
+  "authors": [
+    "yuko1101"
+  ],
+  "contact": {
+    "website": "https://github.com/yuko1101/ItemHighlighter#readme",
+    "repo": "https://github.com/yuko1101/ItemHighlighter"
+  },
   "license": "All-Rights-Reserved",
   "icon": "assets/itemhighlighter/icon.png",
-
   "environment": "client",
-  "entrypoints": {},
-
-      "mixins": [
-        "itemhighlighter.mixins.json"
-      ],
-
+  "entrypoints": {
+    "client": [
+      "io.github.yuko1101.itemhighlighter.ItemHighlighter"
+    ]
+  },
+  "mixins": [
+    "itemhighlighter.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-        "fabric": "*",
+    "fabric": "*",
     "minecraft": "${minecraft_version}"
   }
 }
