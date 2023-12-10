@@ -1,7 +1,6 @@
 package io.github.yuko1101.itemhighlighter.hook
 
 import io.github.yuko1101.itemhighlighter.ItemHighlighter
-import io.github.yuko1101.itemhighlighter.util.NBTUtil.satisfy
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.screen.slot.Slot
@@ -14,9 +13,7 @@ object HandledScreenHook {
         if (!slot.hasStack()) return
         val itemStack = slot.stack
 
-        val typeMatched = ItemHighlighter.needlessItems.filter { it.item.value() == itemStack.item }
-        val hasFound = typeMatched.any { itemStack.nbt.satisfy(it.nbt) }
-        if (!hasFound) return
+        if (ItemHighlighter.getMatchedConditions(itemStack).isNotEmpty()) return
 
         val scaleFactor = 0.9f
         val text = Text.literal("❌").formatted(Formatting.RED)
