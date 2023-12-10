@@ -20,8 +20,8 @@ object ItemHighlighterCommand : ICommand {
             .then(literal("add")
                 .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
                     .executes {
-                        val item = ItemStackArgumentType.getItemStackArgument(it, "item").item
-                        val newList = ItemHighlighter.configFile.getValue("needlessItems").asJsonArray.apply { add(item.registryEntry.registryKey().value.toString()) }
+                        val item = ItemStackArgumentType.getItemStackArgument(it, "item").asString()
+                        val newList = ItemHighlighter.configFile.getValue("needlessItems").asJsonArray.apply { add(item) }
                         ItemHighlighter.configFile.set("needlessItems", newList).save()
                         ItemHighlighter.loadConfig()
                         1
@@ -31,8 +31,8 @@ object ItemHighlighterCommand : ICommand {
             .then(literal("remove")
                 .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
                     .executes {
-                        val item = ItemStackArgumentType.getItemStackArgument(it, "item").item
-                        val newList = ItemHighlighter.configFile.getValue("needlessItems").asJsonArray.apply { remove(JsonPrimitive(item.registryEntry.registryKey().value.toString())) }
+                        val item = ItemStackArgumentType.getItemStackArgument(it, "item").asString()
+                        val newList = ItemHighlighter.configFile.getValue("needlessItems").asJsonArray.apply { remove(JsonPrimitive(item)) }
                         ItemHighlighter.configFile.set("needlessItems", newList).save()
                         ItemHighlighter.loadConfig()
                         1
