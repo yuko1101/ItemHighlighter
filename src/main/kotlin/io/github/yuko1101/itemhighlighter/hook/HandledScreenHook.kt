@@ -1,6 +1,8 @@
 package io.github.yuko1101.itemhighlighter.hook
 
 import io.github.yuko1101.itemhighlighter.ItemHighlighter
+import io.github.yuko1101.itemhighlighter.hook.extensions.KeyBindingExtension
+import io.github.yuko1101.itemhighlighter.mixin.KeyBindingMixin
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.screen.slot.Slot
@@ -25,5 +27,13 @@ object HandledScreenHook {
         drawContext.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, text, 0, 0, -1)
 
         drawContext.matrices.pop()
+    }
+
+    @JvmStatic
+    fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int) {
+        ItemHighlighter.addItemKeyBinding as KeyBindingExtension
+        if (ItemHighlighter.addItemKeyBinding.`itemhighlighter$getBoundKey`().code == keyCode) {
+            ItemHighlighter.addCurrentItem()
+        }
     }
 }

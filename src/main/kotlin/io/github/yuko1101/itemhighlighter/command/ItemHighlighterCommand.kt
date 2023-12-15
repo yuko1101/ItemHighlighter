@@ -74,13 +74,13 @@ object ItemHighlighterCommand : ICommand {
             )
     }
 
-    private fun addItem(item: String) {
+    fun addItem(item: String) {
         val newList = ItemHighlighter.configFile.getValue("valuableItems").asJsonArray.apply { add(item) }
         ItemHighlighter.configFile.set("valuableItems", newList).save()
         ItemHighlighter.loadConfig()
     }
 
-    private fun removeItem(item: String): Boolean {
+    fun removeItem(item: String): Boolean {
         val newList = ItemHighlighter.configFile.getValue("valuableItems").asJsonArray
         val hasRemoved = newList.remove(JsonPrimitive(item))
         ItemHighlighter.configFile.set("valuableItems", newList).save()
