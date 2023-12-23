@@ -37,6 +37,7 @@ object ItemHighlighter : ClientModInitializer {
 
     override fun onInitializeClient() {
         loadConfig()
+        println("ItemHighlighter config loaded at ${configFile.file.absolutePath}")
 
         ClientCommandRegistrationCallback.EVENT.register(ItemHighlighterCommand::register)
 
