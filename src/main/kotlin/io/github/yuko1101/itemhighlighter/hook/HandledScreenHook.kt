@@ -2,7 +2,7 @@ package io.github.yuko1101.itemhighlighter.hook
 
 import io.github.yuko1101.itemhighlighter.ItemHighlighter
 import io.github.yuko1101.itemhighlighter.hook.extensions.KeyBindingExtension
-import io.github.yuko1101.itemhighlighter.mixin.KeyBindingMixin
+import io.github.yuko1101.itemhighlighter.util.ComponentUtil.asString
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.screen.slot.Slot
@@ -30,10 +30,16 @@ object HandledScreenHook {
     }
 
     @JvmStatic
-    fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int) {
+    fun keyPressed(
+        keyCode: Int,
+        scanCode: Int,
+        modifiers: Int,
+        focusedSlot: Slot?
+    ) {
         ItemHighlighter.addItemKeyBinding as KeyBindingExtension
         if (ItemHighlighter.addItemKeyBinding.`itemhighlighter$getBoundKey`().code == keyCode) {
-            ItemHighlighter.addCurrentItem()
+            val focusedStack = focusedSlot?.stack ?: return
+            focusedStack.asString()?.let { ItemHighlighter.addItem(it) }
         }
     }
 }

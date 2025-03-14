@@ -17,10 +17,10 @@ open class ConfigFile(val file: File, val default: JsonObject, private val route
             save()
         }
         try {
-            data = JsonParser().parse(file.readText()).asJsonObject
+            data = JsonParser.parseReader(file.reader()).asJsonObject
         } catch (e: JsonSyntaxException) {
             e.printStackTrace()
-            save() //ファイルを変更前に戻す
+            save() // reset file
         }
         return this
     }

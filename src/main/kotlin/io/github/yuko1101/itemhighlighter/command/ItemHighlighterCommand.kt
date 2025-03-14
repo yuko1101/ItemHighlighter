@@ -1,13 +1,16 @@
 package io.github.yuko1101.itemhighlighter.command
 
-import com.google.gson.JsonPrimitive
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.github.yuko1101.itemhighlighter.ItemHighlighter
-import io.github.yuko1101.itemhighlighter.util.NBTUtil.asString
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.*
+import io.github.yuko1101.itemhighlighter.util.ComponentUtil.asString
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.MinecraftClient
 import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.command.argument.ItemPredicateArgumentType
 import net.minecraft.command.argument.ItemStackArgumentType
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.Style
@@ -19,24 +22,24 @@ object ItemHighlighterCommand : ICommand {
             .then(literal("reload")
                 .executes {
                     ItemHighlighter.loadConfig()
-                    1
+                    Command.SINGLE_SUCCESS
                 }
             )
             .then(literal("add")
-                .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
+                .then(argument("item", ItemPredicateArgumentType.itemPredicate(registryAccess))
                     .executes {
-                        val item = ItemStackArgumentType.getItemStackArgument(it, "item").asString()
-                        addItem(item)
-                        1
+                        val item = StringArgumentType.getString(it, "item")
+                        ItemHighlighter.addItem(item)
+                        Command.SINGLE_SUCCESS
                     }
                 )
             )
             .then(literal("remove")
-                .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
+                .then(argument("item", ItemPredicateArgumentType.itemPredicate(registryAccess))
                     .executes {
-                        val item = ItemStackArgumentType.getItemStackArgument(it, "item").asString()
-                        removeItem(item)
-                        1
+                        val item = StringArgumentType.getString(it, "item")
+                        ItemHighlighter.removeItem(item)
+                        Command.SINGLE_SUCCESS
                     }
                 )
             )
@@ -44,16 +47,16 @@ object ItemHighlighterCommand : ICommand {
                 .then(literal("add")
                     .executes {
                         val itemStack = MinecraftClient.getInstance().player?.mainHandStack
-                        if (itemStack == null || itemStack.item == null) return@executes 1
-                        addItem(itemStack.asString())
-                        1
+                        val itemString = itemStack?.asString() ?: return@executes Command.SINGLE_SUCCESS
+                        ItemHighlighter.addItem(itemString)
+                        Command.SINGLE_SUCCESS
                     }
                 )
                 .then(literal("remove")
                     .executes {
                         val itemStack = MinecraftClient.getInstance().player?.mainHandStack
-                        if (itemStack == null || itemStack.item == null) return@executes 1
-                        val hasRemoved = removeItem(itemStack.asString())
+                        val itemString = itemStack?.asString() ?: return@executes Command.SINGLE_SUCCESS
+                        val hasRemoved = ItemHighlighter.removeItem(itemString)
                         if (!hasRemoved) {
                             val matchedConditions = ItemHighlighter.getMatchedConditions(itemStack)
                             if (matchedConditions.isNotEmpty()) {
@@ -61,30 +64,16 @@ object ItemHighlighterCommand : ICommand {
                                 for (condition in matchedConditions) {
                                     it.source.sendFeedback(
                                         Text.literal(" - ")
-                                            .append(Text.literal(condition.asString()).setStyle(Style.EMPTY.withClickEvent(ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/itemhighlighter remove ${condition.asString()}"))))
+                                            .append(Text.literal(condition.toString()).setStyle(Style.EMPTY.withClickEvent(ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/itemhighlighter remove $condition"))))
                                     )
                                 }
                             } else {
                                 it.source.sendFeedback(Text.literal("No matched conditions."))
                             }
                         }
-                        1
+                        Command.SINGLE_SUCCESS
                     }
                 )
             )
-    }
-
-    fun addItem(item: String) {
-        val newList = ItemHighlighter.configFile.getValue("valuableItems").asJsonArray.apply { add(item) }
-        ItemHighlighter.configFile.set("valuableItems", newList).save()
-        ItemHighlighter.loadConfig()
-    }
-
-    fun removeItem(item: String): Boolean {
-        val newList = ItemHighlighter.configFile.getValue("valuableItems").asJsonArray
-        val hasRemoved = newList.remove(JsonPrimitive(item))
-        ItemHighlighter.configFile.set("valuableItems", newList).save()
-        ItemHighlighter.loadConfig()
-        return hasRemoved
     }
 }
